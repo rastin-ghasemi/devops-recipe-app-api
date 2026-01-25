@@ -1,0 +1,17 @@
+services:
+  terraform:
+    image: hashicorp/terraform
+    volumes:
+      - ./SetUp:/tf/SetUp
+      - ./Deploy:/tf/Deploy
+    working_dir: /tf
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}  # Optional for temporary credentials
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+      # Terraform Variables
+      - TF_VAR_region=${AWS_REGION}
+      - TF_VAR_environment=${ENVIRONMENT}
+      - TF_VAR_project_name=${PROJECT_NAME}
+      - TF_WORKSPACE=${TF_WORKSPACE}

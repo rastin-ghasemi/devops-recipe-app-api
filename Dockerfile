@@ -1,7 +1,16 @@
 FROM python:3.9-alpine3.13
-LABEL maintainer="londonappdeveloper.com"
+LABEL maintainer="Rastin-Ghasemi"
 
+# This sets an environment variable that tells Python: "Don't buffer the output - print/log everything immediately."
 ENV PYTHONUNBUFFERED 1
+
+ARG UID=101
+#Why UID=101 Specifically?
+#101 is often used because:
+#Below 1000: Usually reserved for system users
+#Above 100: Avoids conflict with common system users
+# Common convention: 100-999 for application users
+
 
 COPY ./requirements.txt /tmp/requirements.txt
 COPY ./requirements.dev.txt /tmp/requirements.dev.txt
@@ -23,13 +32,14 @@ RUN python -m venv /py && \
     rm -rf /tmp && \
     apk del .tmp-build-deps && \
     adduser \
+        --uid $UID \
         --disabled-password \
         --no-create-home \
         django-user && \
     mkdir -p /vol/web/media && \
     mkdir -p /vol/web/static && \
-    chown -R django-user:django-user /vol && \
-    chmod -R 755 /vol && \
+    chown -R django-user:django-user /vol/web && \
+    chmod -R 755 /vol/web && \
     chmod -R +x /scripts
 
 ENV PATH="/scripts:/py/bin:$PATH"
